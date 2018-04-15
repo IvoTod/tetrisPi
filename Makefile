@@ -1,2 +1,24 @@
-compile:
-	g++ main.cpp -lwiringPi -ltft_st7735 -std=c++11
+CC = g++
+CFLAGS = -std=c++11
+LFLAGS = -lwiringPi -ltft_st7735
+HEADERS = -I./headers
+
+SOURCEDIR = ./src/
+
+OBJECTS = main.o Input.o
+all: clear tetrisPi
+	@echo Done
+
+tetrisPi: $(OBJECTS)
+	$(CC) $(CFLAGS) $(HEADERS) $(OBJECTS) $(LFLAGS) -o tetrisPi
+
+%.o: $(SOURCEDIR)%.cpp
+	$(CC) $(CFLAGS) $(HEADERS) $(LFLAGS) -MMD -c $< -o $@
+
+-include ./*.d
+
+clear:
+	clear
+
+clean:
+	rm -f *.o *~ *.d
