@@ -28,7 +28,7 @@ int main () {
 	auto CURRENT_FRAME_TIME = Clock::now();    
 
 	int ELAPSED_TIME_MS = std::chrono::duration_cast<std::chrono::milliseconds>(CURRENT_FRAME_TIME - OLD_FRAME_TIME).count();
-	input.update();
+	input.update(ELAPSED_TIME_MS);
 	update(ELAPSED_TIME_MS);
 	draw(tft);
 
