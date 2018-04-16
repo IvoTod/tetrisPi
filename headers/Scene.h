@@ -9,6 +9,7 @@ class GameObject;
 class Scene {
     public:
 	Scene();
+	~Scene();
 
 	void update(int ms);
 	void draw(TFT_ST7735& tft);

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <Vector2D.h>
 #include <Button.h>
 #include <tft_st7735.h>
@@ -40,6 +41,7 @@ void Button::onPress() {
 }
 
 void Button::onSelect() {
+    std::cout << "Selected button " << text << std::endl;
     selected=true;
     canDraw=true;
 }

@@ -59,7 +59,7 @@ void Input::handleButtonPress(Key key, int pin) {
     int currentVal = digitalRead(pin);
     if(bounceTimers[key] <= 0) {
 	if(currentVal && !isKeyHeld(key)) {
-	    std::cout << "Button pressed" << std::endl;
+	    //std::cout << "Button pressed" << std::endl;
 	    heldKeys[key] = true;
 	    pressedKeys[key] = true;
 	    bounceTimers[key] = bounceTime;
@@ -67,7 +67,7 @@ void Input::handleButtonPress(Key key, int pin) {
 	if(!currentVal && isKeyHeld(key)) {
 	    heldKeys[key] = false;
 	    releasedKeys[key] = true;
-	    std::cout << "Button released" << std::endl;
+	    //std::cout << "Button released" << std::endl;
 	}
 
     }
@@ -87,3 +87,5 @@ void Input::updateTimer(Key key, int ms) {
     }
     bounceTimers[key] -= ms;
 }
+
+Input* Input::instance;

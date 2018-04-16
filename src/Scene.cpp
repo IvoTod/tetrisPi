@@ -1,4 +1,5 @@
 #include <Scene.h>
+#include <iostream>
 #include <GameObject.h>
 
 Scene::Scene() {}
@@ -17,4 +18,11 @@ void Scene::draw(TFT_ST7735& tft) {
 
 void Scene::addGameObject(GameObject* gameObject) {
     gameObjects.push_back(gameObject);
+}
+
+Scene::~Scene() {
+    for(int i = 0; i < gameObjects.size(); i++) {
+	delete gameObjects[i];
+    }
+    gameObjects.clear();
 }

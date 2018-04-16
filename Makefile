@@ -5,7 +5,7 @@ HEADERS = -I./headers
 
 SOURCEDIR = ./src/
 
-OBJECTS = main.o Input.o GameObject.o Scene.o SceneManager.o Button.o
+OBJECTS = main.o Input.o GameObject.o Scene.o SceneManager.o Button.o ButtonManager.o
 all: clear tetrisPi
 	@echo Done
 

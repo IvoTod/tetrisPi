@@ -7,6 +7,13 @@
 class Input {
     public:
 	Input();
+	static Input* instance;
+	static Input* getInstance() {
+	    if(!instance) {
+		instance = new Input();
+	    }
+	    return instance;
+	}
 	bool isKeyPressed(Key key);
 	bool isKeyHeld(Key key);
 	bool isKeyReleased(Key key);
