@@ -1,16 +1,21 @@
-
 #include <iostream>
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 #include <chrono>
 #include <Input.h>
 #include <tft_st7735.h>
+#include <Button.h>
+#include <ali_colors.h>
 
 
 void initializeScreen(TFT_ST7735& tft);
 void update(int ms);
 void draw(TFT_ST7735& tft);
 void clear(TFT_ST7735& tft);
+
+void test() {
+    std::cout << "Button pressed!" << std::endl;
+}
 
 int main () {
     using Clock = std::chrono::high_resolution_clock;
@@ -23,6 +28,9 @@ int main () {
     initializeScreen(tft);
 
     Input input = Input();
+    Button button = Button(0, 0, 50, 20, "Button!", &test, ALI_WHITE, ALI_ORANGE);
+    button.draw(tft);
+    button.onPress();
     while(true) {
 	
 	auto CURRENT_FRAME_TIME = Clock::now();    
