@@ -6,6 +6,7 @@
 #include <tft_st7735.h>
 #include <Scene.h>
 #include <SceneManager.h>
+#include <Tetromino.h>
 
 
 void initializeScreen(TFT_ST7735& tft);
@@ -38,8 +39,8 @@ int main () {
 
 	currentScene.update(ELAPSED_TIME_MS);
 
+	sceneManager->clearScreen(tft);
 	currentScene.draw(tft);
-
 
 	//Doing this because the difference is way too small when code is being executed fast and therefore time appears "frozen"
 	if(ELAPSED_TIME_MS != 0) { 

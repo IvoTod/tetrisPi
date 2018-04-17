@@ -23,8 +23,9 @@ class SceneManager {
 	void loadInGameScene();
 	void loadScoreboardScene();
 
-	void update(int ms);
-	void draw(TFT_ST7735& tft);
+	void clearScreen(TFT_ST7735& tft);
+
+	void setClear();
 
 	Scene& getCurrentScene();
 

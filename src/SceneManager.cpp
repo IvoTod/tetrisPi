@@ -3,6 +3,7 @@
 #include <iostream>
 #include <ali_colors.h>
 #include <Button.h>
+#include <Tetris.h>
 
 void scoreboardPress() {
     std::cout << "Scoreboard button pressed!" << std::endl;
@@ -13,7 +14,7 @@ void playPress() {
     SceneManager* sceneManager;
     sceneManager = sceneManager->getInstance();
     sceneManager->loadInGameScene();
-    clear = true;
+    sceneManager->setClear();
 }
 
 SceneManager::SceneManager() {}
@@ -35,23 +36,24 @@ void SceneManager::loadMainMenuScene() {
 
 void SceneManager::loadInGameScene() {
     currentScene = Scene();
+    Tetris* tetris = new Tetris();
+    currentScene.addGameObject(tetris);
 }
 
 void SceneManager::loadScoreboardScene() {
 
 }
 
-void SceneManager::update(int ms) {
-    currentScene.update(ms);
-}
-
-void SceneManager::draw(TFT_ST7735& tft) {
+void SceneManager::clearScreen(TFT_ST7735& tft) {
     if(clear) {
 	clear = false;
 	tft.setBackground(TFT_BLACK);
 	tft.clearScreen();
     }
-    currentScene.draw(tft);
+}
+
+void SceneManager::setClear() {
+    clear=true;
 }
 
 Scene& SceneManager::getCurrentScene() {
