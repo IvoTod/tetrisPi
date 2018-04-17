@@ -4,17 +4,40 @@
 #include <ali_colors.h>
 #include <Button.h>
 #include <Tetris.h>
+#include <Text.h>
+#include <NamePicker.h>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <algorithm>
+#include <Input.h>
 
 void scoreboardPress() {
-    std::cout << "Scoreboard button pressed!" << std::endl;
+    SceneManager* sceneManager;
+    sceneManager = sceneManager->getInstance();
+    sceneManager->loadScoreboardScene();
+    Input* input;
+    input = input->getInstance();
+    input->newFrame();
 }
 
 void playPress() {
-    std::cout << "Play button pressed!" << std::endl;
     SceneManager* sceneManager;
     sceneManager = sceneManager->getInstance();
     sceneManager->loadInGameScene();
-    sceneManager->setClear();
+    Input* input;
+    input = input->getInstance();
+    input->newFrame();
+}
+
+void backPress() {
+    SceneManager* sceneManager;
+    sceneManager = sceneManager->getInstance();
+    sceneManager->loadMainMenuScene();
+    Input* input;
+    input = input->getInstance();
+    input->newFrame();
+
 }
 
 SceneManager::SceneManager() {}
@@ -32,16 +55,58 @@ void SceneManager::loadMainMenuScene() {
     currentScene.addGameObject(playButton);
     currentScene.addGameObject(scoreboardButton);
     currentScene.addGameObject(buttonManager);
+
+    setClear();
 }
 
 void SceneManager::loadInGameScene() {
     currentScene = Scene();
     Tetris* tetris = new Tetris();
     currentScene.addGameObject(tetris);
+
+    setClear();
+}
+
+bool compareScores(const std::pair<std::string, int> &a, const std::pair<std::string, int> &b) {
+    return a.second > b.second;
 }
 
 void SceneManager::loadScoreboardScene() {
+    currentScene = Scene();
+    std::vector<std::pair<std::string, int> > scores;
+    std::ifstream iScoresFile("highscores.txt");
+    std::string temp;
+    while(iScoresFile >> temp) {
+	std::string name = temp.substr(0, 3);
+	std::string score = temp.substr(4);
+	scores.push_back(std::pair<std::string, int>(name, std::stoi(score)));
+    }
+    iScoresFile.close();
 
+    std::sort(scores.begin(), scores.end(), compareScores); 
+
+    for(int i = 0; i < scores.size(); i++) {
+	std::string scoreString;
+	scoreString = scores[i].first + ":" + std::to_string(scores[i].second);
+	Text* text = new Text(20, 10+i*10, scoreString, ALI_WHITE);
+	currentScene.addGameObject(text);
+    }
+
+    Button* backButton = new Button(20, 135, 50, 20, "BACK", &backPress, ALI_WHITE, ALI_BLUE);
+    ButtonManager* buttonManager = new ButtonManager(backButton);
+    currentScene.addGameObject(backButton);
+    currentScene.addGameObject(buttonManager);
+    setClear();
+}
+
+void SceneManager::loadRecordScoreScene(int finalScore) {
+    currentScene = Scene();
+
+    NamePicker* np = new NamePicker(finalScore);
+
+    currentScene.addGameObject(np);
+
+    setClear();
 }
 
 void SceneManager::clearScreen(TFT_ST7735& tft) {

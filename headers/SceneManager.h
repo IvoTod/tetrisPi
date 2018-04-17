@@ -22,6 +22,7 @@ class SceneManager {
 	void loadMainMenuScene();
 	void loadInGameScene();
 	void loadScoreboardScene();
+	void loadRecordScoreScene(int finalScore);
 
 	void clearScreen(TFT_ST7735& tft);
 

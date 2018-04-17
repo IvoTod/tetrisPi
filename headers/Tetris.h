@@ -27,6 +27,10 @@ class Tetris : public GameObject {
 	void prepareNewTetromino();
 	void spawnNextTetromino();
 	void placeTetromino();
+	void cleanupField();
+	void increaseScore(int amount);
+	void increaseDifficulty();
+	void gameOver();
 	bool canMoveRight();
 	bool canMoveLeft();
 	bool canMoveDown();

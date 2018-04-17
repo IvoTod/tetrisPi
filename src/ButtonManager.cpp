@@ -5,6 +5,7 @@ ButtonManager::ButtonManager(Button* firstButton) :
     GameObject(),
     currentButton(firstButton)
 {
+    currentButton->onSelect();
     input = input->getInstance();
 }
 

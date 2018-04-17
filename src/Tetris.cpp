@@ -3,6 +3,7 @@
 #include <tft_st7735.h>
 #include <ali_colors.h>
 #include <random>
+#include <SceneManager.h>
 
 Tetris::Tetris() :
     GameObject(),
@@ -23,6 +24,14 @@ Tetris::Tetris() :
 }
 
 void Tetris::update(int ms) {
+    for(int i = 0; i < 8; i++) {
+	if(field[0][i]) {
+	    gameOver();
+	}
+    }
+    if(input->isKeyPressed(UP)) {
+	increaseScore(500);
+    }
     if(input->isKeyPressed(DOWN)) {
 	if(canMoveDown()) {
 	    currentTetromino->moveDown();
@@ -49,7 +58,7 @@ void Tetris::update(int ms) {
     }
 
     currentTimer+=ms;
-    int currentDropTimer = baseDropTimer + currentDifficulty * 50;
+    int currentDropTimer = baseDropTimer - currentDifficulty * 50;
 
     if(currentTimer > currentDropTimer) {
 	currentTimer-=currentDropTimer;
@@ -90,7 +99,7 @@ void Tetris::draw(TFT_ST7735& tft) {
 		    continue;
 		}
 		int x = j * BLOCK_WIDTH + 2 - BLOCK_WIDTH;
-		int y = i * BLOCK_HEIGHT + 120;
+		int y = i * BLOCK_HEIGHT + 121;
 		tft.fillRect(x, y, BLOCK_WIDTH, BLOCK_HEIGHT, tBlocks[i][j]->bgColor);
 		tft.drawRect(x, y, BLOCK_WIDTH, BLOCK_HEIGHT, tBlocks[i][j]->borderColor);
 	    }
@@ -114,6 +123,14 @@ void Tetris::draw(TFT_ST7735& tft) {
 		tft.drawRect(x, y, BLOCK_WIDTH, BLOCK_HEIGHT, tBlocks[i][j]->borderColor);
 	    }
 	}
+    }
+
+    {//Draw score
+	std::string text = "SCORE:";
+	std::string score = std::to_string(currentScore);
+	tft.setBackground(ALI_BLACK);
+	tft.drawString(60, 130, text.c_str(), ALI_WHITE, 1);
+	tft.drawString(60, 140, score.c_str(), ALI_WHITE, 1);
     }
 
     canDraw=false;
@@ -153,10 +170,10 @@ void Tetris::fillTetrominoList() {
     //Second L tetromino
     int l2[5][5] = 
     {
-	{0,0,0,0,0},
 	{0,0,1,0,0},
 	{0,0,1,0,0},
 	{0,1,2,0,0},
+	{0,0,0,0,0},
 	{0,0,0,0,0}
     };
     tetrominoList.push_back(Tetromino(l2));
@@ -219,27 +236,64 @@ void Tetris::placeTetromino() {
 	    }
 	    int x = tPos.x + j;
 	    int y = tPos.y + i;
-	    if(y <= 0) {
+	    if(y < 0) {
 		continue;
 	    }
 	    field[y][x] = tBlocks[i][j];
-	    std::cout << "PLACING BLOCK" << std::endl;
-	    std::cout << x << " " << y << std::endl;
-	    std::cout << tPos.x << " " << tPos.y << std::endl;
-	    std::cout << i << " " << j << std::endl;
-	    std::cout << (tBlocks[i][j] != NULL) << std::endl;
 	}
     }
+    cleanupField();
     spawnNextTetromino();
     canDraw=true;
-    std::cout << "Placed  tetromino on field, updated field:" << std::endl;
-    for(int i = 0; i < 12; i++) {
-	for(int j = 0; j < 8; j++) {
-	    std::cout << (field[i][j] != NULL);
-	}
-	std::cout << std::endl;
-    }
     
+}
+
+void Tetris::cleanupField() {
+    for(int i = 0; i < 12; i++) {
+	bool cleanRow = true;
+	for(int j = 0; j < 8; j++) {
+	   if(!field[i][j]) {
+		cleanRow=false;
+	   }
+	}
+	if(cleanRow) {
+	    for(int j = 0; j < 8; j++) {
+		delete field[i][j];
+		field[i][j] = NULL;
+	    }
+	    for(int l = i-1; l>=0; l--) {
+		for(int j=0; j < 8; j++) {
+		    field[l+1][j] = field[l][j];
+		    field[l][j] = NULL;
+		}
+	    }
+	    i--;
+	    currentScore+=100;
+	}
+    }
+}
+
+void Tetris::increaseScore(int amount) {
+    int oldOverflows = currentScore / scoreForDifficultyIncrement;
+    currentScore+=amount;
+    int newOverflows = currentScore / scoreForDifficultyIncrement;
+    if(newOverflows > oldOverflows) {
+	increaseDifficulty();
+    }
+    canDraw=true;
+}
+
+void Tetris::increaseDifficulty() {
+    if(currentDifficulty < maxDifficulty) {
+	currentDifficulty++;
+    }
+}
+
+void Tetris::gameOver() {
+    SceneManager* sm;
+    sm = sm->getInstance();
+
+    sm->loadRecordScoreScene(currentScore);
 }
 
 bool Tetris::canMoveLeft() {
@@ -298,8 +352,6 @@ bool Tetris::canMoveDown() {
 		return false;
 	    }
 	    if((y+1 >= 0) && (field[y+1][x])) {
-		//std::cout << "FUCK YOU" << std::endl;
-		//std::cout << field[x][y+1]
 		return false;
 	    }
 	}
@@ -323,7 +375,7 @@ bool Tetris::canRotate() {
 	    if(y >= 12) {
 		return false;
 	    }
-	    if(field[x][y+1] && y+1 >= 0) {
+	    if((y+1 >= 0) && (field[y+1][x])) {
 		return false;
 	    }
 	    if(x >= 8) {

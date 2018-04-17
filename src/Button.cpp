@@ -24,11 +24,13 @@ void Button::draw(TFT_ST7735& tft) {
     unsigned char yTextStart;
     tft.fillRect(pos.x, pos.y, size.x, size.y, bgColor);
 
-    tft.drawRect(pos.x, pos.y, size.x, size.y, fgColor);
+    unsigned int fg = selected ? selectedFgColor : fgColor;
+
+    tft.drawRect(pos.x, pos.y, size.x, size.y, fg);
 
     tft.setBackground(bgColor);
     yTextStart = pos.y + (size.y-(FONT_HEIGHT*1)) / 2;
-    tft.drawString(pos.x+OFFSET_TEXT, yTextStart, text.c_str(), fgColor, 1);
+    tft.drawString(pos.x+OFFSET_TEXT, yTextStart, text.c_str(), fg, 1);
     canDraw = false;
 }
 
@@ -41,7 +43,6 @@ void Button::onPress() {
 }
 
 void Button::onSelect() {
-    std::cout << "Selected button " << text << std::endl;
     selected=true;
     canDraw=true;
 }

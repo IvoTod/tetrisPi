@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <GameObject.h>
 #include <string>
+#include <ali_colors.h>
 #define OFFSET_TEXT 3
 class TFT_ST7735;
 
@@ -49,7 +50,7 @@ class Button : public  GameObject {
 
 	unsigned int fgColor;
 	unsigned int bgColor;
-	unsigned int selectedBorderColor;
+	unsigned int selectedFgColor = ALI_YELLOW;
 
 };
 
